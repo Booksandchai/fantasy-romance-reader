@@ -1,5 +1,5 @@
-from .models import Book
-from .db import SessionLocal
+from models import Book
+from db import SessionLocal
 from sqlalchemy import select
 from collections import Counter
 
