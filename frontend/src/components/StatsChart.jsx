@@ -1,4 +1,4 @@
-import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+import { PieChart, Pie, Tooltip, Legend } from "recharts";
 
 export default function StatsChart({ data }) {
   if (data.length === 0) return <div>No stats yet.</div>;
