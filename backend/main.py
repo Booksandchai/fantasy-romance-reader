@@ -3,10 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
 
-from .db import engine, SessionLocal
-from .models import Base, User, Book, user_read
-from .data_fetch import populate_initial_books
-from .recommender import recommend_for_user
+from db import engine, SessionLocal
+from models import Base, User, Book, user_read
+from data_fetch import populate_initial_books
+from recommender import recommend_for_user
 
 from sqlalchemy import insert
 
