@@ -1,4 +1,4 @@
-from .data_fetch_google import populate_from_google
+from data_fetch_google import populate_from_google
 
 async def populate_initial_books():
     from db import engine
