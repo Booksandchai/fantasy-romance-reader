@@ -3,12 +3,13 @@ export default function ReadList({ books }) {
   return (
     <div style={{ maxHeight: 300, overflow: "auto" }}>
       {books.map((b) => (
-        <div key={b.olid} style={{ marginBottom: 8 }}>
-          <strong>{b.title}</strong> <br />
-          <small>{b.authors}</small>
+        <div key={b.olid} className="card" style={{ marginBottom: 8, padding: 8 }}>
+          <div>
+            <strong>{b.title}</strong> <br />
+            <small>{b.authors}</small>
+          </div>
         </div>
       ))}
     </div>
   );
 }
-
