@@ -1,14 +1,13 @@
-export default function Recommendations({ books, onMarkRead }) {
-  if (books.length === 0) return <div>Loading recommendations...</div>;
+export default function ReadList({ books }) {
+  if (books.length === 0) return <div>No books marked as read yet.</div>;
   return (
-    <div>
+    <div style={{ maxHeight: 300, overflow: "auto" }}>
       {books.map((b) => (
-        <div key={b.olid} style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
-          <div style={{ flex: 1 }}>
-            <div>{b.title}</div>
-            <div style={{ fontSize: 12 }}>{b.authors}</div>
+        <div key={b.olid} className="card" style={{ marginBottom: 8, padding: 8 }}>
+          <div>
+            <strong>{b.title}</strong> <br />
+            <small>{b.authors}</small>
           </div>
-          <button onClick={() => onMarkRead(b.olid)}>Mark Read</button>
         </div>
       ))}
     </div>
