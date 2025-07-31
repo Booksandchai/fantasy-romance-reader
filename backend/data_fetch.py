@@ -1,8 +1,8 @@
 from .data_fetch_google import populate_from_google
 
 async def populate_initial_books():
-    from .db import engine
-    from .models import Book, Base
+    from db import engine
+    from models import Book, Base
     Base.metadata.create_all(bind=engine)
     session = SessionLocal()
     # First seed from Open Library (existing logic)
