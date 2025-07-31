@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Table, ForeignKey, Text
 from sqlalchemy.orm import relationship
-from .db import Base
+from db import Base
 
 # association table for many-to-many between user and read books
 from sqlalchemy import UniqueConstraint
