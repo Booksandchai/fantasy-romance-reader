@@ -1,34 +1,29 @@
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-
-app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # OK for MVP; later lock this to your frontend domain
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
 from typing import List
-import asyncio
 
 from .db import engine, SessionLocal
 from .models import Base, User, Book, user_read
 from .data_fetch import populate_initial_books
 from .recommender import recommend_for_user
 
-from sqlalchemy import select, insert, delete
+from sqlalchemy import insert
 
 app = FastAPI()
 
-# On startup, ensure books exist
+# enable CORS for MVP
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.on_event("startup")
 async def startup():
     Base.metadata.create_all(bind=engine)
-    # populate initial books (if not already)
     await populate_initial_books()
 
 class AddReadRequest(BaseModel):
@@ -45,15 +40,12 @@ class BookOut(BaseModel):
 @app.post("/user/{user_id}/read", response_model=dict)
 def add_read_book(user_id: str, body: AddReadRequest):
     session = SessionLocal()
-    # ensure user exists
     if not session.get(User, user_id):
         session.add(User(id=user_id))
-    # ensure book exists
     book = session.get(Book, body.olid)
     if not book:
         session.close()
         raise HTTPException(404, "Book not found")
-    # insert mapping if not exists
     stmt = insert(user_read).prefix_with("OR IGNORE").values(user_id=user_id, book_id=body.olid)
     session.execute(stmt)
     session.commit()
@@ -63,7 +55,6 @@ def add_read_book(user_id: str, body: AddReadRequest):
 @app.get("/user/{user_id}/read", response_model=List[BookOut])
 def get_read_books(user_id: str):
     session = SessionLocal()
-    # join to get books
     q = session.query(Book).join(user_read, Book.olid == user_read.c.book_id).filter(user_read.c.user_id == user_id)
     books = q.all()
     session.close()
@@ -101,3 +92,4 @@ def recommendations(user_id: str):
             cover_url=b.cover_url
         ))
     return out
+
