@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import BookCard from "./components/BookCard";
-import ReadList from "./components/ReadList";
-import Recommendations from "./components/Recommendations";
-import StatsChart from "./components/StatsChart";
+import BookCard from "./components/BookCard.jsx";
+import ReadList from "./components/ReadList.jsx";
+import Recommendations from "./components/Recommendations.jsx";
+import StatsChart from "./components/StatsChart.jsx";
+
+console.log("frontend bundle loaded; backend URL:", import.meta.env.VITE_BACKEND_URL);
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+
 
 function getUserId() {
   let uid = localStorage.getItem("user_id");
