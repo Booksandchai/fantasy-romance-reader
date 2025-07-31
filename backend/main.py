@@ -12,7 +12,6 @@ from sqlalchemy import insert
 
 app = FastAPI()
 
-# enable CORS for MVP
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
