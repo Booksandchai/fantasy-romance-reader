@@ -1,7 +1,7 @@
 import httpx
 from typing import List
-from .db import SessionLocal
-from .models import Book
+from db import SessionLocal
+from models import Book
 from sqlalchemy.exc import IntegrityError
 
 OPENLIB_BASE = "https://openlibrary.org"
