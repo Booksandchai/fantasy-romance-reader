@@ -1,16 +1,16 @@
 import os
 import asyncio
+import random
 import httpx
 from typing import List
-from db import SessionLocal
-from models import Book
 from sqlalchemy.exc import IntegrityError
-import time
-import random
+
+from db import engine, SessionLocal
+from models import Book
 
 GOOGLE_URL = "https://www.googleapis.com/books/v1/volumes"
 
-# Simple exponential backoff wrapper
+# exponential backoff helper
 async def fetch_with_backoff(client, url, params, max_retries=3):
     delay = 1.0
     for attempt in range(max_retries):
@@ -18,7 +18,7 @@ async def fetch_with_backoff(client, url, params, max_retries=3):
             r = await client.get(url, params=params, timeout=10)
             r.raise_for_status()
             return r.json()
-        except Exception as e:
+        except Exception:
             if attempt == max_retries - 1:
                 raise
             await asyncio.sleep(delay + random.uniform(0, 0.3))
@@ -31,7 +31,6 @@ def normalize_google_volume(volume) -> dict:
     title = info.get("title", "Unknown")
     authors = info.get("authors", [])
     categories = info.get("categories", [])
-    # Choose thumbnail if available (convert to https if needed)
     cover_url = None
     image_links = info.get("imageLinks", {})
     if image_links:
@@ -52,7 +51,7 @@ async def fetch_google_books_for_subject(subject: str, limit: int = 40):
         raise RuntimeError("Missing GOOGLE_BOOKS_KEY environment variable")
     params = {
         "q": f"subject:{subject}",
-        "maxResults": min(limit, 40),  # API allows up to 40 per request
+        "maxResults": min(limit, 40),
         "key": key,
     }
     async with httpx.AsyncClient() as client:
@@ -60,7 +59,6 @@ async def fetch_google_books_for_subject(subject: str, limit: int = 40):
         return data
 
 async def populate_from_google(subjects: List[str] = ["fantasy", "romance"], per_subject: int = 30):
-    from db import engine
     from models import Base
     Base.metadata.create_all(bind=engine)
     session = SessionLocal()
@@ -78,8 +76,7 @@ async def populate_from_google(subjects: List[str] = ["fantasy", "romance"], per
             if not b["olid"] or b["olid"] in seen:
                 continue
             seen.add(b["olid"])
-            book = Book(**b)
-            session.add(book)
+            session.merge(Book(**b))
     try:
         session.commit()
     except IntegrityError:

@@ -82,8 +82,8 @@ function App() {
   return (
     <div style={{ padding: 20, maxWidth: 1000, margin: "0 auto", fontFamily: "inherit" }}>
       <div className="header">
-        <h1>Fantasy & Romance Reader Tracker</h1>
-        <div className="magic">✨ witchy & whimsical</div>
+        <h1>Book Tracker</h1>
+        <div className="magic">✨</div>
       </div>
       <p>
         User ID: <code>{userId}</code>
